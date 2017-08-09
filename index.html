@@ -9,6 +9,8 @@
     <meta name="author" content="Matthew Eastman">
     <meta name="keywords" content="">
     <meta name="robots" content="index, follow">
+     <link rel="canonical" href="http://www.mattheweastman.com/index.html">
+    
     <title>ME | Portfolio</title>
 </head>
     <style>
@@ -43,8 +45,13 @@
             82%  {opacity: 1;}
             100% {opacity: 1;}
 }
-
-            
+        
+      @media only screen and (max-width: 500px) {
+    #m-hide {
+        display: none;
+    }
+}
+      
     </style>  
 <body style="background-color:rgba(249,249,249,1);padding:0px;margin:0px; overflow:hidden;">
     <div style="width:100%;">
@@ -60,10 +67,12 @@
                 <a style="text-decoration:none;font-family:Arial;color:black" href="http://mattheweastman.com/MEastman.pdf" target="_blank">Resume  | </a>
                 <a style="text-decoration:none;font-family:Arial;color:black" href="http://mattheweastman.com/Eastman_Work_Links.pdf" target="_blank"> Work Links</a>
             </div>
-            <iframe class="video_hide" style="position:absolute; bottom:0px;margin-left:-150px;z-index:2;" src="https://www.youtube.com/embed/uBg5M4NWy98?controls=0&disablekb=1&showinfo=0&autoplay=1&rel=0&mute=1&" width="558" height="314" frameborder="0" allowfullscreen></iframe>
-            
-            <img style="position: absolute;bottom:5px;margin-left:-147px; z-index: 3" src="http://mattheweastman.com/video_border.png">
-            <img class="video_block" style="position: absolute;bottom:0px;margin-left:-147px; z-index: 3;" src="http://mattheweastman.com/video_block.png">
+            <span id="m-hide">
+                <iframe class="video_hide" style="position:absolute; bottom:0px;margin-left:-150px;z-index:2;" src="https://www.youtube.com/embed/uBg5M4NWy98?controls=0&disablekb=1&showinfo=0&autoplay=1&rel=0&mute=1&" width="558" height="314" frameborder="0" allowfullscreen></iframe>
+
+                <img style="position: absolute;bottom:5px;margin-left:-147px; z-index: 3" src="http://mattheweastman.com/video_border.png">
+                <img class="video_block" style="position: absolute;bottom:0px;margin-left:-147px; z-index: 3;" src="http://mattheweastman.com/video_block.png">
+            </span>
         </div>
     </div>
 </body>
