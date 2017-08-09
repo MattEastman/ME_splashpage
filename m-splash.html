@@ -1,0 +1,106 @@
+<!doctype html>
+<html ⚡>
+<head>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-youtube" src="https://cdn.ampproject.org/v0/amp-youtube-0.1.js"></script>
+    <script async custom-element="amp-animation" src="https://cdn.ampproject.org/v0/amp-animation-0.1.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <meta name="copyright" content="Matthew Eastman">
+    <meta name="description" content="">
+    <meta name="author" content="Matthew Eastman">
+    <meta name="keywords" content="">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="http://www.mattheweastman.com/index.html">
+  <title>ME | AMP Splash</title>
+    
+<!--  CSS must be embedded inline.   ------------------------------------->
+  <style amp-custom>
+      body{background-color:rgba(249,249,249,1);padding:0px;margin:0px; overflow:hidden; overflow: hidden;}
+      .container{width:100%;margin:auto;min-width:200px;padding-top:15%;width:250px;position: relative;z-index: 100;}
+      h1{text-align:center;font-family:Arial;font-weight:300;margin-left:5px;}
+      .word-container{height:50px;margin-left:0px;text-align:center;padding-top:50px;}
+      a {text-decoration:none;font-family:Arial;color:black;}
+      
+      
+      .blink{margin-left:16%;-moz-transition:all 2s ease-in-out; -webkit-transition:all 2s ease-in-out; -o-transition:all 2s ease-in-out; -ms-transition:all 2s ease-in-out; transition:all 2s ease-in-out; -moz-animation:blink normal 6s infinite ease-in-out; /* Firefox */ -webkit-animation:blink normal 6s infinite ease-in-out; /* Webkit */ -ms-animation:blink normal 6s infinite ease-in-out; /* IE */ animation:blink normal 6s infinite ease-in-out; /* Opera */}
+       @-moz-keyframes blink {0%{opacity:1;} 50%{opacity:0.02;} 100%{opacity:1;}} /* Firefox */
+        @-webkit-keyframes blink {0%{opacity:1;} 50%{opacity:0.02;} 100%{opacity:1;}} /* Webkit */
+        @keyframes blink {0%{opacity:1;} 50%{opacity:0.02;} 100%{opacity:1;}} /* Opera */
+      
+      
+    
+      
+      .border {border: 3px solid green;}
+      
+      
+      
+      
+      .video_block{margin-top: -62%;position: relative;z-index: 99;animation-name: example2;animation-duration: 30s;animation-iteration-count: 1;
+            -webkit-animation-duration: 30s;-webkit-animation-iteration-count: 1;
+            -moz-animation-duration: 30s;-moz-animation-iteration-count: 1;
+            -ms-animation-duration: 30s;-ms-animation-iteration-count: 1;}
+        @-webkit-keyframes example2 {
+            0%   {opacity: 1;}
+            15%  {opacity: 1;} 
+            20%  {opacity: 0;} 
+            80%  {opacity: 0;} 
+            85%  {opacity: 1;}
+            100% {opacity: 1;}
+}
+        
+         
+
+      
+    </style>
+    <!--The AMP boilerplate.-->
+    <style amp-boilerplate>
+        body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}
+    </style>
+
+    <noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+</head>
+    
+<body>
+    <div class="container">
+        <div>
+            <h1>Coming Soon</h1>
+            <amp-img class="blink" src="http://mattheweastman.com/me.png"
+                      width="150"
+                      height="85"
+                      layout="fixed">
+            </amp-img>
+            <div class="word-container">
+                <a href="http://mattheweastman.com/MEastman.pdf" target="_blank">Resume  | </a>
+                <a href="http://mattheweastman.com/Eastman_Work_Links.pdf" target="_blank"> Work Links</a>
+            </div>
+        </div>
+    </div>
+           <amp-youtube 
+                        data-videoid="uBg5M4NWy98"
+                        layout="responsive"
+                        width="558" height="314"
+                        data-param-controls=0
+                        data-param-showinfo=0
+                        data-param-rel=0
+                        
+                        autoplay>
+           </amp-youtube>
+        
+<!--
+         
+            <amp-img class="border" src="http://mattheweastman.com/video_border.png"
+                       width="570"
+                        height="373"
+                        layout="responsive">
+             </amp-img>
+-->
+             <amp-img class="video_block"
+                    src="http://mattheweastman.com/video_block.png"
+                     width="570"
+                     height="373"
+                     layout="responsive">
+            </amp-img>
+    
+</body>
+</html>

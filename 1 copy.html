@@ -1,0 +1,623 @@
+<!--Matt Eastman
+Questions / todo
+1. Get dummy schema file with products just to try and hook it up while at google.
+2. Use Amp-install Service worker to preload/cache AMP pages and non amp pages. Or do we can use it to load PWA (https://www.ampproject.org/docs/guides/pwa-amp)
+2a. Use amp access to control content based on user status. Can we use this for promos? members vs non members
+3. how to use iframe to use javascript.. and/or third party javascript? check olapic code below - bottom of page
+4. Get forms working. Page load vs. page update
+    a. page update - email subscription forms using XMLHttpRequest
+    b. page load - specify a server-endpoint which should handle the form input
+
+- canery chrome run through testing tools again
+- Loop parameter not working in amp youtube
+- Amp notifications - bottom of page
+--------------------------------------------------------------------------------------------------------------------------------->
+
+<!-- Doctype declaration is required. -->
+<!doctype html>
+<!-- This tells everyone that this is an AMP file. `<html amp>` works too. -->
+<html ⚡>
+<head>
+<!-- The charset definition must be the first child of the `<head>` tag. -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>teleflora AMp Demo</title>
+<!-- AMP HTML files require a canonical link pointing to the regular HTML. If no HTML version exists, it should point to itself.-->
+<!-- On Legacy / desktop site add <link rel="amphtml" href="http://example.ampproject.org/article.amp.html" />   -->
+    <link rel="canonical" href="http://teleflora.com">
+<!-- The AMP runtime must be loaded as the second child of the `<head>` tag.-->
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-carousel" src="https://cdn.ampproject.org/v0/amp-carousel-0.1.js"></script>
+    <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
+    <script async custom-template="amp-mustache" src="https://cdn.ampproject.org/v0/amp-mustache-0.1.js"></script>
+    <script async custom-element="amp-list" src="https://cdn.ampproject.org/v0/amp-list-0.1.js"></script>
+    <script async custom-element="amp-form" src="https://cdn.ampproject.org/v0/amp-form-0.1.js"></script>
+    <script async custom-element="amp-analytics" src="https://cdn.ampproject.org/v0/amp-analytics-0.1.js"></script>
+    <script async custom-element="amp-user-notification" src="https://cdn.ampproject.org/v0/amp-user-notification-0.1.js"></script>
+    <script async custom-element="amp-youtube" src="https://cdn.ampproject.org/v0/amp-youtube-0.1.js"></script>
+    <script async custom-element="amp-iframe" src="https://cdn.ampproject.org/v0/amp-iframe-0.1.js"></script>
+    <script async custom-element="amp-animation" src="https://cdn.ampproject.org/v0/amp-animation-0.1.js"></script>
+    <script async custom-element="amp-bind" src="https://cdn.ampproject.org/v0/amp-bind-0.1.js"></script>
+    <script async custom-element="amp-install-serviceworker" src="https://cdn.ampproject.org/v0/amp-install-serviceworker-0.1.js"></script>
+    <script type="application/ld+json">{
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1,
+      "item": {
+        "@id": "https://ampbyexample.com/#samples_templates",
+        "name": "Samples &amp; Templates"
+      }
+    }, {
+      "@type": "ListItem",
+      "position": 2,
+      "item": {
+        "@id": "https://ampbyexample.com/samples_templates/product_browse_page/",
+        "name": "Product Browse Page"
+      }
+    }]
+  }</script>
+ 
+<!-- CSS must be embedded inline. ------------------------------------->
+  <style amp-custom>
+/* Amp-font: this is how you add additional fonts */
+  @font-face {
+    font-family: 'Bembo W01';
+    font-style: normal;
+    font-weight: 400;
+    src: url(/fonts/bembo.0tf) format('truetype');
+  }
+  @font-face {
+    font-family: 'Avenir-Medium';
+    font-style: normal;
+    font-weight: 400;
+    src: url(fonts/Avenir-Medium.ttf) format('truetype');
+  }
+    /* Amp-font: timeout = amount of time to wait to see if not will load (3000 default and 0 means it will only be loaded only if already cached). onerror and onload are optional attributes to add classes once font is loaded on not loaded */
+    <amp-font layout="nodisplay"
+      font-family="Bembo W01"
+      timeout="3000"
+      on-error-remove-class="unavailable-font-loading"
+      on-error-add-class="unavailable-font-missing"
+      on-load-remove-class="unavailable-font-loading"
+      on-load-add-class="unavailable-font-loaded">
+    </amp-font>      
+    <amp-font layout="nodisplay"
+      font-family="Avenir LT W01 65 Medium"
+      timeout="3000"
+    </amp-font>
+      a{color:#fa3c7a; text-decoration: none;}
+      li{list-style-type: none;}
+      h1,h2,h3,h4,h5,h6{text-align: center; font-family: 'Bembo W01', Georgia, "Times New Roman", serif;}
+      h1{font-size: 24px; font-family: "Avenir-Medium", Helvetica, sans-serif;}
+      h2{font-size: 14px; font-family:"Avenir-Medium", Helvetica, sans-serif; font-weight: 400;}
+      #dod_greyback{background-color: rgba(240,240,240,1)}
+      #up15{position: relative;top: -15px}
+      .dividerline {clear: both; border-top: 1px solid #CCCCCC;margin: 25px 50px;}
+      .container-text{padding:2px 10px;}
+      .container-text a{color:#fa3c7a; text-decoration: none;}
+      .container-text h3,.container-text h4, .container-text h5 {text-align: left;font-weight: 400;}
+      .container-text h4{margin-bottom: -15px;}
+      .promo-container{height: 55px;background-color: #fa3c7a;margin-top: -15px}
+      .promo-container h3{font-size: 15px;color:#ffffff;font-weight: 600;}
+      #logo{display: inline-block; position: relative; top:-5px; right: -10px; margin: 0 auto;}
+      #logo2{position: relative;right: -60px; top:-38px;margin: 0 auto;}
+      #header-sidebar{border: 1px solid #e2e2e2;}
+      .ampstart-navbar-trigger{display: inline-block;}
+      .login-container{float: right; height: 22px;display: inline-block;margin-left: 25px; padding:20px 10px 20px 1px;position: relative;top: -20px}
+      .login-container .login, .login-container .cart{display: inline-block;margin:15px 0px 0px 10px;height: 55px;width: 55px; position: relative; top:-10px;position: relative; vertical-align: top;}
+      .login amp-img, .cart amp-img{display: inline-block; position: relative;right: -17px;}
+      .login-container h6{display: inline-block;position: relative;bottom: -15px; margin: auto;}
+      .login h6{vertical-align: top; position: relative;
+      bottom:-1px; padding-left: 12px;}
+      .login-container a{color:black;}
+      .cart h6{position: relative;left: -16%;}
+      .ampstart-nav {margin-top: -22px; background-color: #ffffff;}
+      .ampstart-nav ul {list-style-type: none;position: relative;max-width: 160px;margin:0px;}
+      .ampstart-nav li {position: relative; left: -40px;border-bottom: 1px solid #f1f1f1;min-width:210px;}
+      .ampstart-nav a {font-size: 12px;text-decoration: none;text-transform: uppercase;padding-left: 20px;font-weight: 500;}
+      .ampstart-nav h2{font-size: 12px;background-color:white;padding: 5px 0px;text-align: left;padding-left: 10px;border-bottom: 1px solid black;}
+      .ampstart-dropdown-item{padding:10px 5px;text-decoration: none;}
+      form.amp-form-submit-success [submit-success],
+      form.amp-form-submit-error [submit-error]{margin-top: 16px;}
+      form.amp-form-submit-success [submit-success] {color: green;}
+      form.amp-form-submit-error [submit-error] {color: red;}
+      form.amp-form-submit-success.hide-inputs > input {display: none;}
+      form .ampstart-input{}
+      form input{position: relative; width: 60%;height: 35px; display: block; margin: auto;margin-left: 15%;}
+      form #submit{position: relative;left: 60%; top:-35px; width: 55px;}
+      #x-icon{padding:10px 0px 10px 10px;}
+      .carousel-1wide {background-color:#e2e2e2;height: 300px;margin-top: -20px;}
+      .carousel-1wide h3{padding-top: 5px;text-align: center;}
+      .carousel-1wide amp-img{ display: block; margin: 0 auto;}
+      .carousel-3wide{background: url('http://assets.teleflora.com/images/misc/backgrounds/TF12705_Graduation_1400x420.jpg') center top;}
+      .carousel-3wide .name{text-align: center; text-decoration: none;}
+      .carousel-3wide amp-img{position: relative;
+      top:25px;}
+      .footer{background-color: #fafafa;padding: 10px 0px;}
+      .footer-container a{text-decoration: none;}
+      .footer h5,.footer p,.footer li a{text-align: left;color:grey}
+      .footer li a{font-size: 14px; text-align: left;margin-left: -25px;}
+      .footer h5{margin-bottom: 2px;margin-left: 10px; color:black;}
+      .footer p{font-size: 14px; margin: 0;padding-left: 20px;}
+      .footer a{padding: 0px 3px;}
+      .footer-social{margin-top: 10px;}
+      .footer-social a{text-decoration: none;}
+      .footer .icon-social amp-img{border:1px solid #fa3c7a;}
+      #img-rewards{display: block; padding: 10px 19px 0px 18px;}
+      .footer-grid-2{display: inline-block; width: 48%;vertical-align: top;}
+      
+        amp-user-notification > div {padding: 1rem;display: flex;align-items: center;justify-content: center;}
+      
+  </style>    
+  <!--The AMP boilerplate.-->
+  <style amp-boilerplate>
+      body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style>
+<noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+</head>
+<body>
+<!-- Promo banner section  -->
+<!------------------------------------------------------------------ Promo javascript here -->
+    <div class="promo-container">
+        <h3>Next Day and Same Day Delievery Available On All Boutuets!</h3>
+        <h3 id="up15">Shop Now  >></h3>
+    </div>
+    
+<!-- Amp Start Navbar -->
+    <header class="ampstart-headerbar fixed flex justify-start items-center top-0 left-0 right-0 pl2 pr4" >
+        <div role="button" on="tap:header-sidebar.toggle" tabindex="0" class="ampstart-navbar-trigger">
+            <amp-img width="48"
+                   height="42"
+                   layout="fixed"
+                   src="img/menu2.jpg"></amp-img>
+            <amp-img id="logo" width="120" height="30" layout="fixed" src="img/Teleflora.png" ></amp-img>
+        </div>
+        <div class="login-container">
+            <a href="https://www.teleflora.com/account/login.jsp">
+                <div class="login">
+                    <amp-img width="19"
+                             height="19"
+                             layout="fixed"
+                             src="img/login.png"></amp-img>
+                    <h6>Login</h6>
+               </div>
+            </a> 
+            <a href="https://www.teleflora.com/cart">
+                <div class="cart">
+                    <amp-img width="23"
+                             height="19"
+                             layout="fixed"
+                             src="img/cart.png"></amp-img>
+                    <h6>Cart</h6>
+                </div>
+            </a>
+        </div>
+  </header>
+
+<!-- Amp Start Sidebar --------------------------------------------------------------->
+<amp-sidebar id="header-sidebar" layout="nodisplay">
+  <div>
+    <div id="x-icon" role="button" on="tap:header-sidebar.toggle" tabindex="0">
+      <amp-img src="img/x-icon.png"
+               width="25"
+               height="25"
+               alt="x icon"></amp-img>
+    </div>
+      <amp-img id="logo2" width="120" height="30" layout="fixed" src="img/Teleflora.png" ></amp-img>
+  </div>
+  <nav class="ampstart-sidebar-nav ampstart-nav">
+    <ul class="nav1">
+        <li class="ampstart-dropdown-item"><a href="index.html">Home</a></li>
+        <li class="ampstart-dropdown-item"><a href="pdp.html">Deal of the Day</a></li>
+        <li class="ampstart-dropdown-item"><a href="pdp.html">Mother's Day</a></li>
+        <li class="ampstart-dropdown-item"><a href="pdp.html">Birthday</a></li>
+        <li class="ampstart-dropdown-item"><a href="pdp.html">sympathy</a></li>
+        <li class="ampstart-dropdown-item"><a href="pdp.html">occasions</a></li>
+        <li class="ampstart-dropdown-item"><a href="pdp.html">shop by</a></li>
+        <li class="ampstart-dropdown-item"><a href="pdp.html">collections</a></li>
+        <li class="ampstart-dropdown-item"><a href="pdp.html">quick shop</a></li>
+    </ul>
+    <h2>Customer Service</h2>
+    <ul class="nav2">
+        <li class="ampstart-dropdown-item"><a href="#">E-mail US</a></li>
+        <li class="ampstart-dropdown-item"><a href="#">(800) 493 5610</a></li>
+        <li class="ampstart-dropdown-item"><a href="#">International Delievery</a></li>
+    </ul>
+  </nav>
+</amp-sidebar>
+    
+<!--------------------------------------------- Search Bar Use Form -->
+<form method="GET"
+  class="p2"
+  action="/components/amp-form/submit-form"
+  target="_top">
+    <div class="ampstart-input">
+        <input type="search"
+               placeholder="Search..."
+               name="googlesearch">
+    </div>
+    <input id="submit" type="submit" value="OK" class="ampstart-btn caps">
+</form>    
+    
+<!--------------------------------------------- pdp-carousel -->   
+<amp-carousel class="carousel-3wide"
+              width="auto"
+              height="300"
+              layout="fixed-height"
+              type="carousel"
+              autoplay>
+    <a  href="pdp.html"
+       role="listitem">
+        <amp-img width="150"
+                 height="200"
+                 layout="fixed"
+                 alt="Apple"
+                 src="img/CottonCandy.png"></amp-img>
+        <p class="name">Cotton Candy</p>
+    </a>
+    <a href="#"
+       role="listitem">
+        <amp-img width="150"
+                 height="200"
+                 layout="fixed"
+                 alt="Orange"
+                 src="img/HowSweetItIs.png"></amp-img>
+        <p class="name">another Product</p>
+    </a>
+    <a href="#"
+       role="listitem">
+        <amp-img width="150"
+                 height="200"
+                 layout="fixed"
+                 alt="Pear"
+                 src="img/HowSweetItIs.png"></amp-img>
+        <p class="name">another Product</p>
+    </a>
+    <a href="#"
+       role="listitem">
+        <amp-img width="150"
+                 height="200"
+                 layout="fixed"
+                 alt="Banana"
+                 src="img/JustTickledBouquetbyTeleflora.png"></amp-img>
+        <p class="name">Banana</p>
+    </a>
+    <a href="#"
+       role="listitem">
+        <amp-img width="150"
+                 height="200"
+                 layout="fixed"
+                 alt="Apple"src="img/FashionistaBlooms.png"></amp-img>
+        <p class="name">Apple 2</p>
+    </a>
+    <a href="#"
+       role="listitem">
+        <amp-img width="150"
+                 height="200"
+                 layout="fixed"
+                 alt="Orange"
+                 src="img/JustTickledBouquetbyTeleflora.png"></amp-img>
+        <p class="name">Orange 2</p>
+    </a>
+    <a  role="listitem">
+        <amp-img width="150"
+                 height="200"
+                 layout="fixed"
+                 alt="Pear"
+                 src="img/CountryBasketBlooms.png"></amp-img>
+        <p class="name">Pear 2</p>
+    </a>
+    <a role="listitem">
+        <amp-img width="150"
+                 height="200"
+                 layout="fixed"
+                 alt="Banana"
+                 src="img/JustTickledBouquetbyTeleflora.png"></amp-img>
+        <p class="name">Banana 2</p>
+    </a>
+</amp-carousel> 
+
+<!-- carousel Slider --------------------------------------------------
+<amp-carousel class="carousel-1wide"
+  width="1024"
+  height="800"
+  layout="responsive"
+  type="slides"
+  autoplay>
+  <a href="#">
+      <amp-img src="img/CottonCandy.png"
+               width="240"
+               height="232"
+               alt="product hero 1"
+               attribution="visualhunt">
+      </amp-img>
+      <div class="caption"><h3>CottonCandy</h3></div>
+  </a>
+  <a href="#">
+   <amp-img src="img/HowSweetItIs.png"
+            width="240"
+            height="232"
+            alt="product hero 2"
+            attribution="visualhunt"></amp-img>
+      <div class="caption"><h3>How Sweet It Is</h3></div>
+  </a>
+  <a href="#">
+      <amp-img src="img/TelefloraCountrySpringBouquet.png"
+               width="240"
+               height="232"
+               alt="product hero 3"
+               attribution="visualhunt"></amp-img>
+    <div class="caption"><h3>Teleflora Country Spring Bouquet</h3></div>
+  </a>
+</amp-carousel>
+---->
+<div>
+    <h1>mother's day favorites</h1>
+</div> 
+<!---------------------------------------------------------------------------- list uses Json to populate products ------>
+<amp-list class="items"
+          width="200"
+          height="100"
+          layout="responsive"
+          src="json/related_products.json">
+    <template type="amp-mustache">
+        <a class="m1 text-decoration-none" href="/samples_templates/product/preview/">
+            <amp-img width="640"
+                     height="426"
+                     layout="responsive"
+                     alt="{{name}}"
+                     src="{{img}}"></amp-img>
+            <p class="name">{{name}}</p>
+            <p class="star">{{{stars}}}</p>
+            <p class="price">${{price}}</p>
+        </a>
+    </template>
+</amp-list>
+
+<!------- Deal of te Deay ---->
+<div class="container-text" id="dod_greyback">
+    <h2>You pick the price and our expert florists will create and hand-deliver a one-of-kind, artisanal arrangement using the freshest seasonal flowers available. Starting at $50.</h2>
+</div>
+    
+<amp-img  src="http://img.teleflora.com/image/upload/fl_lossy,f_auto,q_auto:eco/prod/banners/201702-dealoftheday-m.jpg"
+         width="624"
+         height="284"
+         layout="responsive"
+         alt="Deal of the Day">
+</amp-img> 
+    
+<!-- YouTube Video -------------------------------------------------------------->
+ <amp-youtube
+    data-videoid="HChogjoDOS8"
+    layout="responsive"
+    width="480" height="270"
+    data-param-controls=0
+    data-param-showinfo=0
+    autoplay>
+</amp-youtube>
+    
+    
+<!-- Read More text -->
+<div class="container-text">
+    <h3>Flower Delivery from Teleflora</h3>
+    <h4>Bouquets Hand Arranged by a Local Florist</h4>
+    <h5>We are proud to offer beautiful <a href="#">hand-arranged bouquets</a> and <a href="#">fast</a>, reliable delivery by one of our local florists located across the US and Canada. Every Teleflora order is sent to a local florist as we believe that supporting our local businesses strengthens our communities. Our fresh flowers are delivered in a vase, ready to be enjoyed immediately; unlike other companies, we <a href="#">never</a> pack the arrangement in a box to be shipped across the country. That's the Teleflora difference!</h5>
+    
+    <h4>Send Fresh Flowers for Every Occasion</h4>
+    <h5>With Teleflora, you can buy <a href="#">cheerful birthday blooms</a>, thoughtful <a href="#">Mother's Day arrangements</a>, romantic <a href="#">Valentine's Day bouquets</a> and more. We offer a large selection for <a href="#">sympathy and funeral</a>, including <a href="#">funeral bouquets</a>, <a href="#">casket sprays</a> and sympathy <a href="#">floral baskets</a> for the home. With a huge variety of <a href="#">everyday arrangements, bestselling plants, centerpieces</a> for a special party, <a href="#">Thanksgiving centerpieces, Christmas wreaths and Christmas trees, Christmas flowers, floral baskets</a> and <a href="#">gourmet food baskets</a> - you'll be sure to find the perfect gift for anyone on your list. You can shop flowers <a href="#">by type</a> – does your recipient love <a href="#">Roses</a>, <a href="#">Carnations</a>, <a href="#">Daisies</a>, <a href="#">Tulips</a> or <a href="#">Lilies?</a> You can shop by <a href="#">occasion</a>, make a beeline for <a href="#">Best Sellers</a>, or use our <a href="#">recipient</a> guide to help you find the perfect gift. If you need <a href="#">help writing cards &amp; messages</a> our guide can help you pen the perfect sentiment. For <a href="#">ideas &amp; inspiration</a>, visit the <a href="#">meaning of flowers</a> glossary.</h5>
+    
+    <h4>Same Day Flower Delivery</h4>
+    <h5>Teleflora has been providing high quality services that have made people smile for the last <a href="#">81 years</a>. Sending gifts is easy with Teleflora, order flowers online from your desktop, tablet or phone. If you need <a href="#">same-day flower delivery</a>, be sure to place your order before 3:00 PM, Monday - Friday, or by 12:00 PM on Saturday or Sunday (in your recipient's time zone) and we will deliver the flowers the very same day.</h5>
+    
+    <h4>Teleflora Bouquets Make A Wonderful Gift</h4>
+    <h5>Teleflora's celebrated Flowers-in-a-Gift collection includes arrangements that arrive in ceramic mugs, teacups, pitchers, mercury glass bowls or many other unique containers. Our unique <a href="#">Teleflora keepsakes</a> are exclusive vases and containers that can be enjoyed for years to come. Shop our exclusive <a href="#">Collections</a> to view elegant and artistic bouquets curated by our expert florists to fit a specific theme and occasion.</h5>
+    
+    <h4>Order Flowers Online for the Best Deal</h4>
+    <h5>Looking for the best online <a href="#">promotions</a> and deals? Send a <a href="#">Deal of the Day</a> bouquet and feel confident knowing a local floral designer will create an unforgettable arrangement of flowers with their own signature style and flair. Designs will vary as our artisan florists work with the freshest, in-season flowers and their own personal inspiration - but you can be sure your bouquet will delight!</h5>
+</div>
+    
+<!------------- footer-->
+ <footer class='footer' >
+     <div>
+         <h5>Connect with Teleflora</h5>
+         <p>Get the latest news and offers.</p>
+    <!-- Email sign up form  ------- Use the action-xhr attribute to submit the form via XMLHttpRequest (XHR) --------------->
+        <form method="post"
+              class="p2"
+              action-xhr="/account/externalUserSubscriptions.jsp" target="_top">
+            <div class="ampstart-input">
+                <input type="email"
+                       class=""
+                       name="optinEmailAddress"
+                       placeholder="Enter E-Mail Address"
+                       required>
+            </div>
+            <input type="submit"
+                   value="Subscribe"
+                   class="ampstart-btn">
+            <div submit-success>
+                <template type="amp-mustache"> Success! Thanks {{name}} for trying the
+                    <code>amp-form</code> demo! Try to insert the word "error" as a name input in the form to see how
+                    <code>amp-form</code> handles errors.
+                </template>
+            </div>
+            <div submit-error>
+                <template type="amp-mustache">Error! Thanks {{name}} for trying the
+                    <code>amp-form</code> demo with an error response.
+                </template>
+            </div>
+        </form>
+
+        <!--Footer: connect Social -->
+        <div class="footer-connect">
+            <h5>Connect with Teleflora</h5>
+            <p>Get the latest news and offers.</p>
+            <div class="footer-social">
+                    <a href="https://www.facebook.com/teleflora" class="icon-social" target="_blank">
+                        <amp-img src="img/social-sprite-fb.jpg"
+                            width="55"
+                            height="55"
+                            layout="fixed"
+                            alt="facebook">
+                        </amp-img> 
+                    </a>
+                    <a href="https://twitter.com/teleflora" class="icon-social" target="_blank">
+                        <amp-img src="img/social-sprite-g.jpg"
+                            width="55"
+                            height="55"
+                           layout="fixed"
+                            alt="facebook">
+                        </amp-img> 
+                    </a>
+                    <a href="https://www.instagram.com/teleflora/" class="icon-social" target="_blank">
+                     <amp-img src="img/social-sprite-inst.jpg"
+                            width="55"
+                            height="55"
+                            layout="fixed"
+                            alt="facebook">
+                        </amp-img> 
+                    </a>
+                    <a href="http://www.pinterest.com/teleflora/" class="icon-social" target="_blank">
+                    <amp-img src="img/social-sprite-tw.jpg"
+                            width="55"
+                            height="55"
+                            layout="fixed"
+                            alt="facebook">
+                        </amp-img> 
+                    </a>
+                    <a href="https://www.youtube.com/teleflora/" class="icon-social" target="_blank">
+                    <amp-img src="img/social-sprite-pin.jpg"
+                            width="55"
+                            height="55"
+                            layout="fixed"
+                            alt="facebook">
+                        </amp-img> 
+                    </a>
+                    <a href="https://plus.google.com/+teleflora" class="icon-social" target="_blank">
+                    <amp-img src="img/social-sprite-yt.jpg"
+                            width="55"
+                            height="55"
+                            layout="fixed"
+                            alt="facebook">
+                        </amp-img> 
+                    </a> 
+            </div>
+        </div>
+
+        <!-- footer: Rewards   -->
+        <div class="footer-rewards">
+            <h5>Get Rewarded!</h5>
+            <p>Earn rewards like discounts and free bouquets</p>
+            <a id="img-rewards" href="http://www.teleflora.com/account/login.jsp?signUpForRewards=true">
+                <amp-img id="animation1" src="img/teleflora_rewards.png"
+                        width="236"
+                        height="32"
+                        layout="fixed"
+                        alt="facebook">
+                </amp-img>
+            </a>
+        </div>
+    </div>
+
+    <!--Footer: OurCompany rewards ----->     
+    <div class="footer-container">
+        <div class="footer-grid-2">
+              <h5>Our Company</h5>
+              <ul class="link-list">
+                <li><a href="info-about-teleflora.asp.html">About Us</a></li>
+                <li><a href="http://www.teleflora.com/careers">Careers</a></li>
+                <li><a href="http://www.teleflora.com/media">Media</a></li>
+                <li><a href="http://www.teleflora.com/info">Our Services</a></li>
+                <li><a href="http://www.teleflora.com/info-partner-programs">Partnership Programs</a></li>
+                <li><a href="http://www.teleflora.com/becomeatelefloraflorist">Become a Teleflora Florist</a></li>
+                <li> <a href="http://www.teleflora.com/info/the-teleflora-difference">What's the Teleflora Difference?</a> </li>
+              </ul>
+            </div>
+        <div class="footer-grid-2">
+            <h5>Flower Guides</h5>
+            <ul class="link-list">
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="floral-tips-inspiration.html">Floral Facts &amp; Inspiration</a></li>
+                <li><a href="giftGuide.html">Gift Giving Guides</a></li>
+                <li><a href="sympathy.html">Sympathy &amp; Funeral Guide</a></li>
+                <li><a href="http://www.teleflora.com/wedding-flowers/ideas-inspiration">Wedding Flower Guide</a></li>
+            </ul>
+        </div>
+        <div class="footer-grid-2">
+            <h5>Shop Teleflora</h5>
+            <ul class="link-list">
+                <li><a href="http://www.teleflora.com/same-day-flower-delivery/?catID=cat480085">Same-Day Flower Delivery</a></li>
+                <li><a href="birthday-flowers/index.html%3FcatID=cat210012.html">Birthday Flowers</a></li>
+                <li><a href="sympathy.html">Funeral &amp; Sympathy Flowers</a></li>
+                <li><a href="http://www.teleflora.com/InternationalFlowerDelivery?countryName=Default&amp;defaultCountry=Default">International Flower Delivery</a></li>
+            </ul>
+        </div>
+        <div class="footer-grid-2">
+            <h5>Help</h5>
+            <ul class="link-list">
+                <li><a href="customerservice.asp.html">Customer FAQs</a></li>
+                <li><a href="http://www.findaflorist.com/" target="_blank">Find a Florist</a></li>
+                <li><a href="http://www.teleflora.com/info/how-to-place-an-order">Order &amp; Delivery Info</a></li>
+                <li><a href="http://www.teleflora.com/aboutUs/order_inquiry.jsp">Contact Customer Service</a></li>
+                <li><a href="securityprivacy.html">Security &amp; Privacy</a></li>
+                <li><a href="http://www.teleflora.com/sitemap">Sitemap</a></li>
+            </ul>
+        </div>
+    </div>
+<!-- language changer
+      <div class="container_4 d-container_12 clearfix">
+        <div class="grid_2 d-grid_3 d-omega ftrLanguage">
+          <label class="m-footer-label">Change Language</label>
+          <select name="languageSelect" id="languageSelect" onchange="redirectToTranslatedURL()">
+            <option value="www.teleflora.com">English</option>
+            <option value="fr1.teleflora.com">French</option>
+          </select>
+        </div>
+      </div>
+-->
+</footer>
+    
+    
+<!-- AMP service worker ------------------------------------------------------------->
+<amp-install-serviceworker
+  src="https://www.your-domain.com/serviceworker.js"
+  data-iframe-src="https://www.your-domain.com/install-serviceworker.html"
+  layout="nodisplay">
+</amp-install-serviceworker>
+    
+    
+<!------- Olapc ---  Can we use iframe to  make this work? --------------------------- 
+<div>
+    <h1>Show us your beautiful Teleflora bouquet! #Teleflora</h1>
+</div> 
+
+    <amp-iframe width=300 height=300
+    sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+    layout="responsive"
+    frameborder="0"
+    src="http://mattheweastman.com/TF-AMP/Teleflora_Amp/iframe.html">
+</amp-iframe>
+----->   
+    
+<!------ Dissmissable Notifications-->
+<amp-user-notification
+    layout="nodisplay"
+    id="amp-user-notification1"
+    data-show-if-href="https://foo.com/api/show-api?timestamp=TIMESTAMP"
+    data-dismiss-href="https://foo.com/api/dismissed">
+    This site uses cookies to personalize content.
+    <a href="">Learn more.</a>
+    <button on="tap:amp-user-notification1.dismiss">I accept</button>
+</amp-user-notification>
+    
+<amp-user-notification id="my-notification"
+                       layout="nodisplay">
+    <div>This is an amp-user-notification. It uses local storage to store the dismissed state.
+    <button on="tap:my-notification.dismiss" class="ampstart-btn caps ml1">I accept</button>
+    </div>
+</amp-user-notification>
+ ----   
+    
+</body>
+</html>
